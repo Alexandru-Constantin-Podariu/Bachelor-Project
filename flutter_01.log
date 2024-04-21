@@ -1,0 +1,107 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter pub upgrade
+
+## exception
+
+FormatException: FormatException: Unexpected end of input (at character 1)
+
+^
+
+
+```
+#0      _ChunkedJsonParser.fail (dart:convert-patch/convert_patch.dart:1383:5)
+#1      _ChunkedJsonParser.close (dart:convert-patch/convert_patch.dart:501:7)
+#2      _parseJson (dart:convert-patch/convert_patch.dart:36:10)
+#3      JsonDecoder.convert (dart:convert/json.dart:610:36)
+#4      JsonCodec.decode (dart:convert/json.dart:216:41)
+#5      createPluginSymlinks (package:flutter_tools/src/flutter_plugins.dart:985:51)
+#6      refreshPluginsList (package:flutter_tools/src/flutter_plugins.dart:1101:5)
+<asynchronous suspension>
+#7      FlutterProject.ensureReadyForPlatformSpecificTooling (package:flutter_tools/src/project.dart:359:5)
+<asynchronous suspension>
+#8      PackagesGetCommand.runCommand (package:flutter_tools/src/commands/packages.dart:366:7)
+<asynchronous suspension>
+#9      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1367:27)
+<asynchronous suspension>
+#10     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#11     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#12     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:348:9)
+<asynchronous suspension>
+#13     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:294:5)
+<asynchronous suspension>
+#15     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:112:9)
+<asynchronous suspension>
+#16     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#17     main (package:flutter_tools/executable.dart:90:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[!] Flutter (Channel stable, 3.16.9, on macOS 14.1.1 23B81 darwin-arm64, locale en-GB)
+    • Flutter version 3.16.9 on channel stable at /Users/alex/flutter
+    ! The flutter binary is not on your path. Consider adding /Users/alex/flutter/bin to your path.
+    ! The dart binary is not on your path. Consider adding /Users/alex/flutter/bin to your path.
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision 41456452f2 (3 months ago), 2024-01-25 10:06:23 -0800
+    • Engine revision f40e976bed
+    • Dart version 3.2.6
+    • DevTools version 2.28.5
+    • If those were intentional, you can disregard the above warnings; however it is recommended to use "git" directly to perform update checks and upgrades.
+
+[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+    • Android SDK at /Users/alex/Library/Android/sdk
+    • Platform android-34, build-tools 34.0.0
+    • Java binary at: /Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java
+    • Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b829.9-10027231)
+    • All Android licenses accepted.
+
+[!] Xcode - develop for iOS and macOS (Xcode 15.0.1)
+    • Xcode at /Applications/Xcode.app/Contents/Developer
+    • Build 15A507
+    ✗ CocoaPods not installed.
+        CocoaPods is used to retrieve the iOS and macOS platform side's plugin code that responds to your plugin usage on the Dart side.
+        Without CocoaPods, plugins will not work on iOS or macOS.
+        For more info, see https://flutter.dev/platform-plugins
+      To install see https://guides.cocoapods.org/using/getting-started.html#installation for instructions.
+
+[✓] Chrome - develop for the web
+    • Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[✓] Android Studio (version 2022.3)
+    • Android Studio at /Applications/Android Studio.app/Contents
+    • Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    • Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    • Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b829.9-10027231)
+
+[✓] IntelliJ IDEA Ultimate Edition (version 2023.2.2)
+    • IntelliJ at /Applications/IntelliJ IDEA.app
+    • Flutter plugin version 76.3.4
+    • Dart plugin version 232.9559.10
+
+[✓] VS Code (version 1.88.1)
+    • VS Code at /Applications/Visual Studio Code.app/Contents
+    • Flutter extension version 3.86.0
+
+[✓] Connected device (3 available)
+    • sdk gphone64 arm64 (mobile) • emulator-5554 • android-arm64  • Android 14 (API 34) (emulator)
+    • macOS (desktop)             • macos         • darwin-arm64   • macOS 14.1.1 23B81 darwin-arm64
+    • Chrome (web)                • chrome        • web-javascript • Google Chrome 124.0.6367.60
+
+[✓] Network resources
+    • All expected network resources are available.
+
+! Doctor found issues in 2 categories.
+```

@@ -1,0 +1,14 @@
+com.example.bachelor_project.app-jetified-annotation-experimental-1.1.0-0 /Users/alex/.gradle/caches/transforms-3/02315cc9f75263553d2042718fc375ee/transformed/jetified-annotation-experimental-1.1.0/res
+com.example.bachelor_project.app-jetified-window-1.0.0-beta04-1 /Users/alex/.gradle/caches/transforms-3/076eb9235982ee06112d76594ea8585f/transformed/jetified-window-1.0.0-beta04/res
+com.example.bachelor_project.app-jetified-window-java-1.0.0-beta04-2 /Users/alex/.gradle/caches/transforms-3/99750bb863b6fe460a7b5da8686e778d/transformed/jetified-window-java-1.0.0-beta04/res
+com.example.bachelor_project.app-core-1.6.0-3 /Users/alex/.gradle/caches/transforms-3/d08c73bfb05384f2e52578171dbd141e/transformed/core-1.6.0/res
+com.example.bachelor_project.app-debug-4 /Users/alex/Documents/GitHub/Bachelor-Project/android/app/src/debug/res
+com.example.bachelor_project.app-main-5 /Users/alex/Documents/GitHub/Bachelor-Project/android/app/src/main/res
+com.example.bachelor_project.app-pngs-6 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/generated/res/pngs/debug
+com.example.bachelor_project.app-resValues-7 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/generated/res/resValues/debug
+com.example.bachelor_project.app-rs-8 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/generated/res/rs/debug
+com.example.bachelor_project.app-mergeDebugResources-9 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/intermediates/incremental/debug/mergeDebugResources/merged.dir
+com.example.bachelor_project.app-mergeDebugResources-10 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+com.example.bachelor_project.app-merged_res-11 /Users/alex/Documents/GitHub/Bachelor-Project/build/app/intermediates/merged_res/debug
+com.example.bachelor_project.app-packaged_res-12 /Users/alex/Documents/GitHub/Bachelor-Project/build/path_provider_android/intermediates/packaged_res/debug
+com.example.bachelor_project.app-packaged_res-13 /Users/alex/Documents/GitHub/Bachelor-Project/build/sqflite/intermediates/packaged_res/debug

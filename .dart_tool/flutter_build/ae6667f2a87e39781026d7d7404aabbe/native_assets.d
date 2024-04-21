@@ -1,0 +1,1 @@
+ /Users/alex/Documents/GitHub/Bachelor-Project/.dart_tool/flutter_build/ae6667f2a87e39781026d7d7404aabbe/native_assets.yaml: 
