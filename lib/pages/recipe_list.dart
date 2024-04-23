@@ -1,23 +1,23 @@
+import '../model/Recipe.dart';
 import 'package:flutter/material.dart';
-import '../model/Product.dart';
-class ProductList extends StatefulWidget {
-  final List<Product> products;
-  final Function(Product) onEditProductClick;
-  final Function() onAddProductClick;
-  final Function(Product) onDeleteProductClick;
+class RecipeList extends StatefulWidget {
+  final List<Recipe> recipes;
+  final Function(Recipe) onEditRecipeClick;
+  final Function() onAddRecipeClick;
+  final Function(Recipe) onDeleteRecipeClick;
 
-  ProductList({
-    required this.products,
-    required this.onEditProductClick,
-    required this.onAddProductClick,
-    required this.onDeleteProductClick,
+  RecipeList({
+    required this.recipes,
+    required this.onEditRecipeClick,
+    required this.onAddRecipeClick,
+    required this.onDeleteRecipeClick,
   });
 
   @override
-  _ProductListState createState() => _ProductListState();
+  _RecipeListState createState() => _RecipeListState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _RecipeListState extends State<RecipeList> {
   late String _selectedCategory;
 
   @override
@@ -28,15 +28,15 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Product> filteredProducts;
+    List<Recipe> filteredRecipes;
     if(_selectedCategory == RecipeCategories.first)
     {
-        filteredProducts = widget.products.toList();
+        filteredRecipes = widget.recipes.toList();
     }
     else
     {
-      filteredProducts = widget.products
-        .where((product) => product.category == _selectedCategory)
+      filteredRecipes = widget.recipes
+        .where((recipe) => recipe.category == _selectedCategory)
         .toList();
     }
 
@@ -45,7 +45,7 @@ class _ProductListState extends State<ProductList> {
         Row(
           children: [
             ElevatedButton(
-              onPressed: widget.onAddProductClick,
+              onPressed: widget.onAddRecipeClick,
               child: const Icon(Icons.add_circle),
               
             ),
@@ -72,12 +72,12 @@ class _ProductListState extends State<ProductList> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: filteredProducts.length,
+            itemCount: filteredRecipes.length,
             itemBuilder: (context, index) {
-              return ProductListItem(
-                product: filteredProducts[index],
-                onEditProductClick: widget.onEditProductClick,
-                onDeleteProductClick: widget.onDeleteProductClick,
+              return RecipeListItem(
+                recipe: filteredRecipes[index],
+                onEditRecipeClick: widget.onEditRecipeClick,
+                onDeleteRecipeClick: widget.onDeleteRecipeClick,
               );
             },
           ),
@@ -87,25 +87,16 @@ class _ProductListState extends State<ProductList> {
   }
 }
 
-class ProductListItem extends StatelessWidget {
-  final Product product;
-  final Function(Product) onEditProductClick;
-  final Function(Product) onDeleteProductClick;
+class RecipeListItem extends StatelessWidget {
+  final Recipe recipe;
+  final Function(Recipe) onEditRecipeClick;
+  final Function(Recipe) onDeleteRecipeClick;
 
-  ProductListItem({
-    required this.product,
-    required this.onEditProductClick,
-    required this.onDeleteProductClick,
+  RecipeListItem({
+    required this.recipe,
+    required this.onEditRecipeClick,
+    required this.onDeleteRecipeClick,
   });
-  String printquantity(Product product) {
-    if (product.quantity == product.quantity.toInt()) {
-      return product.quantity.toInt().toString();
-    } 
-    else 
-    {
-      return product.quantity.toString();
-    }
-  }
   void selectCategory()
   {
     // getProductsFromFuture();
@@ -118,7 +109,7 @@ class ProductListItem extends StatelessWidget {
       margin: const EdgeInsets.all(4),
       color: Theme.of(context).colorScheme.onPrimary,
       child: ExpansionTile(
-        title: Text(product.name,
+        title: Text(recipe.name,
             style: const TextStyle(color: Colors.red, fontSize: 25)),
         children: [
           ListTile(
@@ -126,15 +117,11 @@ class ProductListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Brand: ${product.brand}',
+                  'Ingredients: ${recipe.ingredients}',
                   style: const TextStyle(color: Colors.black, fontSize: 20),
                 ),
                 Text(
-                  'Quantity: ${printquantity(product)} ${product.unit}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
-                ),
-                Text(
-                  'Best Before Date:  ${product.bestBeforeDate}',
+                  'Instructions:  ${recipe.instructions}',
                   style: const TextStyle(color: Colors.black, fontSize: 20),
                 ),
               ],
@@ -145,12 +132,12 @@ class ProductListItem extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.delete_sweep_outlined),
-                onPressed: () => onDeleteProductClick(product),
+                onPressed: () => onDeleteRecipeClick(recipe),
               ),
               const SizedBox(width: 280),
               IconButton(
                 icon: Icon(Icons.edit_note),
-                onPressed: () => onEditProductClick(product),
+                onPressed: () => onEditRecipeClick(recipe),
               ),
             ],
           ),

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'expired_list.dart';
 import '../model/Product.dart';
 import '../database/database_repository.dart';
-import 'delete_page.dart';
-import 'add_page.dart';
-import 'edit_page.dart';
+import 'delete_product_page.dart';
+import 'add_product_page.dart';
+import 'edit_product_page.dart';
 
  
 class ExpirationPage extends StatefulWidget {
@@ -67,7 +67,7 @@ class _ExpirationPageState extends State<ExpirationPage> {
         builder: (context) => AddProductPage(
           onAddProduct: (Product newProduct) {
             setState(() {
-              dbrepo.add(newProduct);
+              dbrepo.addProduct(newProduct);
               productsFuture = getProductsFromFuture();
             });
           },
@@ -86,7 +86,7 @@ class _ExpirationPageState extends State<ExpirationPage> {
           onEditProduct: (Product editedProduct) {
             setState(() {
               editedProduct.id = product.id;
-              dbrepo.edit(editedProduct);
+              dbrepo.editProduct(editedProduct);
               productsFuture = getProductsFromFuture();
             });
           },
@@ -103,7 +103,7 @@ class _ExpirationPageState extends State<ExpirationPage> {
           product: product,
           onDeleteProduct: (Product deletedProduct) {
             setState(() {
-              dbrepo.delete(deletedProduct.id!);
+              dbrepo.deleteProduct(deletedProduct.id!);
               productsFuture = getProductsFromFuture();
             });
           },

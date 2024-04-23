@@ -21,5 +21,13 @@ class DatabaseConnection{
         "unit TEXT NOT NULL,"
         "bestBeforeDate TEXT NOT NULL)"
     );
+      await database.execute(
+      "CREATE TABLE recipe"
+        "(id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "name TEXT NOT NULL,"
+        "category TEXT NOT NULL,"
+        "ingredients TEXT NOT NULL,"
+        "instructions TEXT NOT NULL)"
+    );
   }
 }

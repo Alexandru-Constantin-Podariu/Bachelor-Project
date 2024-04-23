@@ -24,7 +24,7 @@ class _ExpiredListState extends State<ExpiredList> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = ProductCategories.first;
+    _selectedCategory = RecipeCategories.first;
     _selectedOption = "Expired";
   }
 
@@ -33,7 +33,7 @@ class _ExpiredListState extends State<ExpiredList> {
 
     List<Product> filteredProducts;
 
-    if (_selectedCategory == ProductCategories.first) 
+    if (_selectedCategory == RecipeCategories.first) 
     {
       filteredProducts = widget.products.toList();
     }
@@ -89,7 +89,7 @@ class _ExpiredListState extends State<ExpiredList> {
               const SizedBox(width: 20),
               DropdownButton<String>(
                 value: _selectedCategory,
-                items: ProductCategories.map((category) {
+                items: RecipeCategories.map((category) {
                   return DropdownMenuItem<String>(
                     value: category,
                     child: Text(category),

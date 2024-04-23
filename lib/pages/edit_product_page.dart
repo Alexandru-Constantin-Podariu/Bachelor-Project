@@ -43,6 +43,7 @@ class _EditProductPageState extends State<EditProductPage> {
     brandController.dispose();
     quantityController.dispose();
     bestBeforeDateController.dispose();
+    unitController.dispose();
     super.dispose();
   }
 
@@ -101,8 +102,8 @@ class _EditProductPageState extends State<EditProductPage> {
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
                 DropdownButtonFormField<String>(
-                  value: ProductCategories.firstWhere((element) => element == categoryController.text),
-                  items: ProductCategories.map((category) {
+                  value: RecipeCategories.firstWhere((element) => element == categoryController.text),
+                  items: RecipeCategories.map((category) {
                     return DropdownMenuItem<String>(
                       value: category,
                       child: Text(category),

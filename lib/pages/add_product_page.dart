@@ -36,12 +36,13 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   void dispose() {
-    super.dispose();
     nameController.dispose();
     categoryController.dispose();
     brandController.dispose();
     quantityController.dispose();
     bestBeforeDateController.dispose();
+    unitController.dispose();
+    super.dispose();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -98,8 +99,8 @@ class _AddProductPageState extends State<AddProductPage> {
                       decoration: const InputDecoration(labelText: 'Name'),
                     ),
                     DropdownButtonFormField<String>(
-                      value: ProductCategories.first,
-                      items: ProductCategories.map((category) {
+                      value: RecipeCategories.first,
+                      items: RecipeCategories.map((category) {
                         return DropdownMenuItem<String>(
                           value: category,
                           child: Text(category),
@@ -179,7 +180,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               ErrorDialog();
                             }
                           },
-                          child: const Text('Add'),
+                          child: const Text('Add Product'),
                         ),
                         ElevatedButton(
                           onPressed: () {

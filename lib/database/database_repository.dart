@@ -1,6 +1,8 @@
 //import 'dart:ffi';
 import 'dart:io';
 //import 'package:intl/intl.dart';
+import 'package:bachelor_project/model/Recipe.dart';
+
 import '../database/database_connection.dart';
 import '../model/Product.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,7 +12,8 @@ import 'package:path_provider/path_provider.dart';
 class DatabaseRepository {
   static const _name = "products.db";
   static const _version = 1;
-  static const _table = "product";
+  static const _productsTable = "product";
+  static const _recipeTable = "recipe";
 
   DatabaseRepository._();
 
@@ -32,7 +35,7 @@ class DatabaseRepository {
   }
 
   _onCreate(Database db, int version) async {
-    await db.execute('''CREATE TABLE $_table
+    await db.execute('''CREATE TABLE $_productsTable
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         category TEXT NOT NULL,
@@ -40,18 +43,37 @@ class DatabaseRepository {
         quantity REAL,
         unit TEXT NOT NULL,
         bestBeforeDate TEXT NOT NULL)''');
+
+    await db.execute('''CREATE TABLE $_recipeTable
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        ingredients TEXT NOT NULL,
+        instructions TEXT NOT NULL)''');
   }
 
   Future<List<Product>> getProducts() async {
     Database db = await Instance.database;
 
-    var products = await db.query(_table);
+    var products = await db.query(_productsTable);
 
     List<Product> productList = products.isNotEmpty
         ? products.map((prod) => Product.fromMap(prod)).toList()
         : [];
 
     return productList;
+  }
+
+  Future<List<Recipe>> getRecipes() async {
+    Database db = await Instance.database;
+
+    var recipes = await db.query(_recipeTable);
+
+    List<Recipe> recipeList = recipes.isNotEmpty
+        ? recipes.map((recipe) => Recipe.fromMap(recipe)).toList()
+        : [];
+
+    return recipeList;
   }
 
   Future<String> getDatabasePath() async {
@@ -61,7 +83,7 @@ class DatabaseRepository {
 
   Future<List<Product>> getProductsFromCategory(String category) async{
     Database db = await Instance.database;
-    var products = await db.query(_table, where: 'category = ?', whereArgs: [category]);
+    var products = await db.query(_productsTable, where: 'category = ?', whereArgs: [category]);
 
     List<Product> productList = products.isNotEmpty
         ? products.map((prod) => Product.fromMap(prod)).toList()
@@ -70,19 +92,47 @@ class DatabaseRepository {
     return productList;
   }
 
-  Future<int> add(Product product) async {
+  Future<List<Recipe>> getRecipesFromCategory(String category) async {
     Database db = await Instance.database;
-    return await db.insert(_table, product.toMap());
+
+    var recipes = await db.query(_recipeTable, where: 'category = ?', whereArgs: [category]);
+
+    List<Recipe> recipeList = recipes.isNotEmpty
+        ? recipes.map((recipe) => Recipe.fromMap(recipe)).toList()
+        : [];
+
+    return recipeList;
   }
 
-  Future<int> delete(int id) async {
+  Future<int> addProduct(Product product) async {
     Database db = await Instance.database;
-    return await db.delete(_table, where: 'id = ?', whereArgs: [id]);
+    return await db.insert(_productsTable, product.toMap());
   }
 
-  Future<int> edit(Product product) async {
+  Future<int> addRecipe(Recipe recipe) async {
     Database db = await Instance.database;
-    return await db.update(_table, product.toMap(),
+    return await db.insert(_recipeTable, recipe.toMap());
+  }
+
+  Future<int> deleteProduct(int id) async {
+    Database db = await Instance.database;
+    return await db.delete(_productsTable, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteRecipe(int id) async {
+    Database db = await Instance.database;
+    return await db.delete(_recipeTable, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> editProduct(Product product) async {
+    Database db = await Instance.database;
+    return await db.update(_productsTable, product.toMap(),
         where: 'id = ?', whereArgs: [product.id]);
+  }
+
+  Future<int> editRecipe(Recipe recipe) async {
+    Database db = await Instance.database;
+    return await db.update(_recipeTable, recipe.toMap(),
+        where: 'id = ?', whereArgs: [recipe.id]);
   }
 }

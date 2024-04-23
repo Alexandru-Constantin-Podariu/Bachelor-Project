@@ -1,7 +1,8 @@
 //import 'dart:ffi';
 
-import 'package:bachelor_project/pages/view_page.dart';
+import 'package:bachelor_project/pages/view_products_page.dart';
 import 'package:bachelor_project/pages/expiration_page.dart';
+import 'package:bachelor_project/pages/view_recipes_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -88,11 +89,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ViewPage()));
+                          MaterialPageRoute(builder: (context) => ViewProductsPage()));
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary),
-                    child: const Text('View Pantry',
+                    child: const Text('Manage Pantry',
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 20,
@@ -122,11 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ViewRecipesPage()));
                   },
                   style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary),
-                  child: const Text('Meal Suggestions',
+                  child: const Text('Manage Recipes',
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 20,

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'product_list.dart';
 import '../model/Product.dart';
 import '../database/database_repository.dart';
-import 'delete_page.dart';
-import 'add_page.dart';
-import 'edit_page.dart';
+import 'delete_product_page.dart';
+import 'add_product_page.dart';
+import 'edit_product_page.dart';
 
  
-class ViewPage extends StatefulWidget {
+class ViewProductsPage extends StatefulWidget {
   @override
-  State<ViewPage> createState() => _ViewPageState();
+  State<ViewProductsPage> createState() => _ViewProductsPageState();
 }
 
-class _ViewPageState extends State<ViewPage> {
+class _ViewProductsPageState extends State<ViewProductsPage> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
   late Future<List<Product>> productsFuture;
   String path = '';
@@ -68,7 +68,7 @@ class _ViewPageState extends State<ViewPage> {
         builder: (context) => AddProductPage(
           onAddProduct: (Product newProduct) {
             setState(() {
-              dbrepo.add(newProduct);
+              dbrepo.addProduct(newProduct);
               productsFuture = getProductsFromFuture();
             });
           },
@@ -87,7 +87,7 @@ class _ViewPageState extends State<ViewPage> {
           onEditProduct: (Product editedProduct) {
             setState(() {
               editedProduct.id = product.id;
-              dbrepo.edit(editedProduct);
+              dbrepo.editProduct(editedProduct);
               productsFuture = getProductsFromFuture();
             });
           },
@@ -104,7 +104,7 @@ class _ViewPageState extends State<ViewPage> {
           product: product,
           onDeleteProduct: (Product deletedProduct) {
             setState(() {
-              dbrepo.delete(deletedProduct.id!);
+              dbrepo.deleteProduct(deletedProduct.id!);
               productsFuture = getProductsFromFuture();
             });
           },
