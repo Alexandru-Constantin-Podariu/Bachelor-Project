@@ -53,7 +53,7 @@ class Recipe{
     "Dinner",
     "Soups",
     "Main-courses",
-    "Side-dishes"
+    "Side-dishes",
     "Desserts",
     "Drinks",
     "Holiday",

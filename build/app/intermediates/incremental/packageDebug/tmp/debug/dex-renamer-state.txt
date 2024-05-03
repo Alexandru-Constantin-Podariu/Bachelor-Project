@@ -1,4 +1,4 @@
-#Sun Apr 21 18:27:48 EEST 2024
+#Mon Apr 29 18:35:43 EEST 2024
 base.0=/Users/alex/Documents/GitHub/Bachelor-Project/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

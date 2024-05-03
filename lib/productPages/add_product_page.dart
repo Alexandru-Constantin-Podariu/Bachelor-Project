@@ -99,8 +99,8 @@ class _AddProductPageState extends State<AddProductPage> {
                       decoration: const InputDecoration(labelText: 'Name'),
                     ),
                     DropdownButtonFormField<String>(
-                      value: RecipeCategories.first,
-                      items: RecipeCategories.map((category) {
+                      value: ProductCategories.first,
+                      items: ProductCategories.map((category) {
                         return DropdownMenuItem<String>(
                           value: category,
                           child: Text(category),
@@ -159,9 +159,9 @@ class _AddProductPageState extends State<AddProductPage> {
                         ElevatedButton(
                           onPressed: () {
                             if (nameController.text.isNotEmpty &&
-                                categoryController.text != "Select a category" &&
+                                categoryController.text != ProductCategories[0] &&
                                 brandController.text.isNotEmpty &&
-                                unitController.text != "Select a unit" &&
+                                unitController.text != MeasurementUnit[0] &&
                                 bestBeforeDateController.text.isNotEmpty &&
                                 quantityController.number != null) {
                               final Product newProduct = Product(

@@ -135,4 +135,16 @@ class DatabaseRepository {
     return await db.update(_recipeTable, recipe.toMap(),
         where: 'id = ?', whereArgs: [recipe.id]);
   }
+
+  Future<List<Product>> getProductFromRecipe(String name) async {
+    Database db = await Instance.database;
+
+    var products = await db.query(_productsTable, where: 'name LIKE ?', whereArgs: ['%$name%'], orderBy: 'bestBeforeDate');
+
+    List<Product> productList = products.isNotEmpty
+        ? products.map((prod) => Product.fromMap(prod)).toList()
+        : [];
+
+    return productList;
+  }
 }

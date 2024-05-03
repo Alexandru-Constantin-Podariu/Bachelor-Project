@@ -107,7 +107,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         ElevatedButton(
                           onPressed: () {
                             if (nameController.text.isNotEmpty &&
-                                categoryController.text != "Select a category" &&
+                                categoryController.text != RecipeCategories[0] &&
                                 instructionsController.text.isNotEmpty &&
                                 ingredientsController.text.isNotEmpty) {
                               final Recipe newRecipe = Recipe(

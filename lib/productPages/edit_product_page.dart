@@ -102,8 +102,8 @@ class _EditProductPageState extends State<EditProductPage> {
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
                 DropdownButtonFormField<String>(
-                  value: RecipeCategories.firstWhere((element) => element == categoryController.text),
-                  items: RecipeCategories.map((category) {
+                  value: ProductCategories.firstWhere((element) => element == categoryController.text),
+                  items: ProductCategories.map((category) {
                     return DropdownMenuItem<String>(
                       value: category,
                       child: Text(category),
@@ -160,14 +160,13 @@ class _EditProductPageState extends State<EditProductPage> {
                     ElevatedButton(
                       onPressed: () {
                         if (nameController.text.isNotEmpty &&
-                            categoryController.text != "Select a category" &&
+                            categoryController.text != ProductCategories[0] &&
                             brandController.text.isNotEmpty &&
-                            unitController.text != "Select a unit" &&
+                            unitController.text != MeasurementUnit[0] &&
                             quantityController.number != null &&
                             bestBeforeDateController.text.isNotEmpty) {
                           Product editedProduct = Product(
                             name: nameController.text,
-                            //category: categoryController.text,
                             category: categoryController.text,
                             brand: brandController.text,
                             quantity: quantityController.number!.toDouble(),

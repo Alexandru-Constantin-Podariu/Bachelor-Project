@@ -1,29 +1,36 @@
+import 'package:bachelor_project/model/PossibleRecipes.dart';
+
 import '../model/Recipe.dart';
 import 'package:flutter/material.dart';
-class RecipeList extends StatefulWidget {
+class PossibleRecipes extends StatefulWidget {
   final List<Recipe> recipes;
-  final Function(Recipe) onEditRecipeClick;
-  final Function() onAddRecipeClick;
-  final Function(Recipe) onDeleteRecipeClick;
+  final Function(Recipe) onPrepareRecipeClick;
 
-  RecipeList({
+  PossibleRecipes({
     required this.recipes,
-    required this.onEditRecipeClick,
-    required this.onAddRecipeClick,
-    required this.onDeleteRecipeClick,
+    required this.onPrepareRecipeClick,
   });
 
   @override
-  _RecipeListState createState() => _RecipeListState();
+  _PossibleRecipesState createState() => _PossibleRecipesState();
 }
 
-class _RecipeListState extends State<RecipeList> {
+class _PossibleRecipesState extends State<PossibleRecipes> {
   late String _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _selectedCategory = RecipeCategories.first;
+  }
+
+  List<Recipe> filterPossibleRecipes()
+  {
+      List<Recipe> filteredRecipes = widget.recipes
+        .where((recipe) => recipe.category == _selectedCategory)
+        .toList();
+
+      return filteredRecipes;
   }
 
   @override
@@ -35,20 +42,14 @@ class _RecipeListState extends State<RecipeList> {
     }
     else
     {
-      filteredRecipes = widget.recipes
-        .where((recipe) => recipe.category == _selectedCategory)
-        .toList();
+      filteredRecipes = filterPossibleRecipes();
     }
 
     return Column(
+      
       children: [
         Row(
           children: [
-            ElevatedButton(
-              onPressed: widget.onAddRecipeClick,
-              child: const Icon(Icons.add_circle),
-              
-            ),
             const SizedBox(width: 10),
             const Text("Categories: "),
             const SizedBox(width: 10),
@@ -76,8 +77,7 @@ class _RecipeListState extends State<RecipeList> {
             itemBuilder: (context, index) {
               return RecipeListItem(
                 recipe: filteredRecipes[index],
-                onEditRecipeClick: widget.onEditRecipeClick,
-                onDeleteRecipeClick: widget.onDeleteRecipeClick,
+                onPrepareRecipeClick: widget.onPrepareRecipeClick,
               );
             },
           ),
@@ -89,13 +89,11 @@ class _RecipeListState extends State<RecipeList> {
 
 class RecipeListItem extends StatelessWidget {
   final Recipe recipe;
-  final Function(Recipe) onEditRecipeClick;
-  final Function(Recipe) onDeleteRecipeClick;
+  final Function(Recipe) onPrepareRecipeClick;
 
   RecipeListItem({
     required this.recipe,
-    required this.onEditRecipeClick,
-    required this.onDeleteRecipeClick,
+    required this.onPrepareRecipeClick,
   });
   void selectCategory()
   {
@@ -107,42 +105,33 @@ class RecipeListItem extends StatelessWidget {
     
     return Card(
       margin: const EdgeInsets.all(4),
-      color: Theme.of(context).colorScheme.onPrimary,
+      color: Theme.of(context).colorScheme.onInverseSurface,
       child: ExpansionTile(
         title: Text(recipe.name,
-            style: const TextStyle(color: Colors.red, fontSize: 25)),
+            style: const TextStyle(fontSize: 25)),
         children: [
           ListTile(
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ingredients: ${recipe.ingredients}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
-                ),
-                Text(
-                  'Instructions:  ${recipe.instructions}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
-                ),
+              children: [              
+                SizedBox(height: 10),
+                SizedBox(
+                width: 140,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: () => onPrepareRecipeClick(recipe),
+                
+                  child: const Text('Prepare',
+                      style: TextStyle(
+                          fontSize: 20,
+                        )))),
               ],
             ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.delete_sweep_outlined),
-                onPressed: () => onDeleteRecipeClick(recipe),
-              ),
-              const SizedBox(width: 280),
-              IconButton(
-                icon: Icon(Icons.edit_note),
-                onPressed: () => onEditRecipeClick(recipe),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
+
+  
 }

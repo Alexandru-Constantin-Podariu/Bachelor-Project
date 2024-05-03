@@ -23,13 +23,13 @@ class _ProductListState extends State<ProductList> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = RecipeCategories.first;
+    _selectedCategory = ProductCategories.first;
   }
 
   @override
   Widget build(BuildContext context) {
     List<Product> filteredProducts;
-    if(_selectedCategory == RecipeCategories.first)
+    if(_selectedCategory == ProductCategories.first)
     {
         filteredProducts = widget.products.toList();
     }
@@ -54,7 +54,7 @@ class _ProductListState extends State<ProductList> {
             const SizedBox(width: 10),
             DropdownButton<String>(
               value: _selectedCategory,
-              items: RecipeCategories.map((category) {
+              items: ProductCategories.map((category) {
                 return DropdownMenuItem<String>(
                   value: category,
                   child: Text(category),
@@ -116,10 +116,10 @@ class ProductListItem extends StatelessWidget {
     
     return Card(
       margin: const EdgeInsets.all(4),
-      color: Theme.of(context).colorScheme.onPrimary,
+      color: Theme.of(context).colorScheme.onInverseSurface,
       child: ExpansionTile(
         title: Text(product.name,
-            style: const TextStyle(color: Colors.red, fontSize: 25)),
+            style: const TextStyle( fontSize: 25)),
         children: [
           ListTile(
             subtitle: Column(
@@ -127,15 +127,15 @@ class ProductListItem extends StatelessWidget {
               children: [
                 Text(
                   'Brand: ${product.brand}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  style: const TextStyle( fontSize: 20),
                 ),
                 Text(
                   'Quantity: ${printquantity(product)} ${product.unit}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  style: const TextStyle( fontSize: 20),
                 ),
                 Text(
                   'Best Before Date:  ${product.bestBeforeDate}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  style: const TextStyle( fontSize: 20),
                 ),
               ],
             ),

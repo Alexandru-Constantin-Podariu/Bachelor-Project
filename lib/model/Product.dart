@@ -88,7 +88,7 @@ class Product{
     "pack"
   ];
 
-  List<String> RecipeCategories = [
+  List<String> ProductCategories = [
     "Select a category",
     "Cereals",
     "Condiments",

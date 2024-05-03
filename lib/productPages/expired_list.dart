@@ -24,7 +24,7 @@ class _ExpiredListState extends State<ExpiredList> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = RecipeCategories.first;
+    _selectedCategory = ProductCategories.first;
     _selectedOption = "Expired";
   }
 
@@ -33,7 +33,7 @@ class _ExpiredListState extends State<ExpiredList> {
 
     List<Product> filteredProducts;
 
-    if (_selectedCategory == RecipeCategories.first) 
+    if (_selectedCategory == ProductCategories.first) 
     {
       filteredProducts = widget.products.toList();
     }
@@ -89,7 +89,7 @@ class _ExpiredListState extends State<ExpiredList> {
               const SizedBox(width: 20),
               DropdownButton<String>(
                 value: _selectedCategory,
-                items: RecipeCategories.map((category) {
+                items: ProductCategories.map((category) {
                   return DropdownMenuItem<String>(
                     value: category,
                     child: Text(category),
@@ -149,10 +149,10 @@ class ProductListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(4),
-      color: const Color.fromARGB(255, 212, 205, 0),
+      color: Theme.of(context).colorScheme.onInverseSurface,
       child: ExpansionTile(
         title: Text(product.name + ' - ' + product.bestBeforeDate,
-            style: const TextStyle(color: Colors.red, fontSize: 25)),
+            style: const TextStyle( fontSize: 25)),
         children: [
           ListTile(
             subtitle: Column(
@@ -160,11 +160,11 @@ class ProductListItem extends StatelessWidget {
               children: [
                 Text(
                   'Brand: ${product.brand}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Quantity: ${printquantity(product)} ${product.unit}',
-                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  style: const TextStyle( fontSize: 20),
                 ),
               ],
             ),

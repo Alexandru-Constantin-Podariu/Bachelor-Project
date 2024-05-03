@@ -1,8 +1,9 @@
 //import 'dart:ffi';
 
-import 'package:bachelor_project/pages/view_products_page.dart';
-import 'package:bachelor_project/pages/expiration_page.dart';
-import 'package:bachelor_project/pages/view_recipes_page.dart';
+import 'package:bachelor_project/recipePages/meal_recommendation_page.dart';
+import 'package:bachelor_project/productPages/view_products_page.dart';
+import 'package:bachelor_project/productPages/expiration_page.dart';
+import 'package:bachelor_project/recipePages/view_recipes_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,18 +22,19 @@ class MyApp extends StatelessWidget {
       title: 'Digital Pantry',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color.fromARGB(255, 242, 215, 10),
-            // primary:Color.fromARGB(255, 242, 215, 10) ,
-            // onPrimary: Color.fromARGB(255, 242, 215, 10),
-            // background: Color.fromARGB(255, 185, 83, 5),
+            seedColor: Color.fromARGB(255, 228, 174, 103),
+            // primary:Color.fromARGB(255, 255, 255, 255) ,
+            // onPrimary: Color.fromARGB(255, 255, 255, 255),
+            // background: Color.fromARGB(255, 236, 189, 88),
+
             brightness: Brightness.light),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
        colorScheme: ColorScheme.fromSeed(
-            seedColor: Color.fromARGB(255, 238, 213, 20),
-            // primary:Color.fromARGB(255, 88, 78, 4),
-            // onPrimary: Color.fromARGB(255, 88, 78, 4),
+            seedColor: Color.fromARGB(255, 228, 174, 103),
+            // primary:Color.fromARGB(255, 0, 0, 0),
+            // onPrimary: Color.fromARGB(255, 0, 0, 0),
             // background: Color.fromARGB(161, 67, 31, 4),
             brightness: Brightness.dark),
         useMaterial3: true,
@@ -57,6 +59,66 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  void manageProduceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('Manage your Produce'),
+        );
+      },
+    );
+  }
+  void manageRecipesDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('Manage your Recipes'),
+        );
+      },
+    );
+  }
+  void expiredProduceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('See expired or close to expired Produce'),
+        );
+      },
+    );
+  }
+  void shoppingDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('See your Shopping List'),
+        );
+      },
+    );
+  }
+   void mealDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('Get meal Recommendations'),
+        );
+      },
+    );
+  }
+  void settingsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('Modify settings'),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
+        
         // decoration: const BoxDecoration(
         //   image: DecorationImage(
         //     image: AssetImage("images/pic.jpeg"),
@@ -78,90 +141,90 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const Text("Welcome to your Pantry Management Application",
                 style: TextStyle(
-                  color: Colors.orange,
                   fontSize: 25,
                 ),
                 textAlign: TextAlign.center),
             const SizedBox(height: 100),
             SizedBox(
-                width: 230,
+                width: 290,
                 height: 50,
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => ViewProductsPage()));
                     },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary),
-                    child: const Text('Manage Pantry',
+                    onLongPress: (){
+                      manageProduceDialog();
+                    },
+                   
+                   child: const Text('Manage Pantry',
                         style: TextStyle(
-                          color: Colors.red,
                           fontSize: 20,
                         )))),
             const SizedBox(height: 10),
             SizedBox(
-                width: 230,
+                width: 290,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ExpirationPage()));
+                            builder: (context) => ViewRecipesPage()));
                   },
-                  style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary),
+                  onLongPress: (){
+                      manageRecipesDialog();
+                    },
+                  child: const Text('Manage Recipes',
+                      style: TextStyle(                  
+                        fontSize: 20,
+                      )),
+                )),
+            const SizedBox(height: 10),
+            SizedBox(
+                width: 290,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExpirationPage()));
+                  },
+                  onLongPress: (){
+                      expiredProduceDialog();
+                    },
                   child: const Text('Expiration Dates',
                       style: TextStyle(
-                        color: Colors.red,
                         fontSize: 20,
                       )),
                 )),
             const SizedBox(height: 10),
             SizedBox(
-                width: 230,
+                width: 290,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ViewRecipesPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MealRecommendationPage()));
                   },
-                  style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary),
-                  child: const Text('Manage Recipes',
+                  onLongPress: (){
+                      shoppingDialog();
+                    },
+                  child: const Text('Meal Recommendations',
                       style: TextStyle(
-                        color: Colors.red,
                         fontSize: 20,
                       )),
                 )),
             const SizedBox(height: 10),
             SizedBox(
-                width: 230,
+                width: 290,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
                     //Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPage()));
                   },
-                  style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary),
-                  child: const Text('Shopping List',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                      )),
-                )),
-            const SizedBox(height: 10),
-            SizedBox(
-                width: 230,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPage()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary),
+                  onLongPress: (){
+                      settingsDialog();
+                    },
                   child: const Text('Settings',
                       style: TextStyle(
-                        color: Colors.red,
                         fontSize: 20,
                       )),
                 )),

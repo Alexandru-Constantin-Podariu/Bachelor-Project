@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'expired_list.dart';
+import 'product_list.dart';
 import '../model/Product.dart';
 import '../database/database_repository.dart';
 import 'delete_product_page.dart';
-import 'add_product_page.dart';
+import '../productPages/add_product_page.dart';
 import 'edit_product_page.dart';
 
  
-class ExpirationPage extends StatefulWidget {
+class ViewProductsPage extends StatefulWidget {
   @override
-  State<ExpirationPage> createState() => _ExpirationPageState();
+  State<ViewProductsPage> createState() => _ViewProductsPageState();
 }
 
-class _ExpirationPageState extends State<ExpirationPage> {
+class _ViewProductsPageState extends State<ViewProductsPage> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
   late Future<List<Product>> productsFuture;
   String path = '';
@@ -34,7 +34,7 @@ class _ExpirationPageState extends State<ExpirationPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: Text("View Expired Products"),
+        title: Text("View Pantry"),
       ),
       body: FutureBuilder(
         future: productsFuture,
@@ -49,14 +49,16 @@ class _ExpirationPageState extends State<ExpirationPage> {
           } else {
             List<Product> products = snapshot.data as List<Product>;
             
-            return ExpiredList(
+            return ProductList(
               products: products,
               onEditProductClick: navigateToEditProductPage,
+              onAddProductClick: navigateToAddProductPage,
               onDeleteProductClick: navigateToDeleteProductPage,
             );
           }
         },
       ),
+      
     );
   }
 

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'product_list.dart';
+import 'expired_list.dart';
 import '../model/Product.dart';
 import '../database/database_repository.dart';
 import 'delete_product_page.dart';
-import 'add_product_page.dart';
+import '../productPages/add_product_page.dart';
 import 'edit_product_page.dart';
 
  
-class OCR_ADD extends StatefulWidget {
+class ExpirationPage extends StatefulWidget {
   @override
-  State<OCR_ADD> createState() => _OCR_ADDState();
+  State<ExpirationPage> createState() => _ExpirationPageState();
 }
 
-class _OCR_ADDState extends State<OCR_ADD> {
+class _ExpirationPageState extends State<ExpirationPage> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
   late Future<List<Product>> productsFuture;
   String path = '';
@@ -34,7 +34,7 @@ class _OCR_ADDState extends State<OCR_ADD> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: Text("View Pantry"),
+        title: Text("View Expired Products"),
       ),
       body: FutureBuilder(
         future: productsFuture,
@@ -49,10 +49,9 @@ class _OCR_ADDState extends State<OCR_ADD> {
           } else {
             List<Product> products = snapshot.data as List<Product>;
             
-            return ProductList(
+            return ExpiredList(
               products: products,
               onEditProductClick: navigateToEditProductPage,
-              onAddProductClick: navigateToAddProductPage,
               onDeleteProductClick: navigateToDeleteProductPage,
             );
           }

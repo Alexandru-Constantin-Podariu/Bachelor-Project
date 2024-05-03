@@ -1,3 +1,4 @@
+import 'package:bachelor_project/recipePages/check_recipe_page.dart';
 import 'package:flutter/material.dart';
 import 'recipe_list.dart';
 import '../model/Recipe.dart';
@@ -51,9 +52,10 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
             
             return RecipeList(
               recipes: recipes,
-              onEditRecipeClick: navigateToEditProductPage,
-              onAddRecipeClick: navigateToAddProductPage,
-              onDeleteRecipeClick: navigateToDeleteProductPage,
+              onEditRecipeClick: navigateToEditRecipePage,
+              onAddRecipeClick: navigateToAddRecipePage,
+              onDeleteRecipeClick: navigateToDeleteRecipePage,
+              onCheckRecipeClick: navigateToCheckRecipePage
             );
           }
         },
@@ -61,7 +63,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     );
   }
 
-  void navigateToAddProductPage() async {
+  void navigateToAddRecipePage() async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -78,7 +80,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
 
   }
 
-  void navigateToEditProductPage(Recipe recipe) async {
+  void navigateToEditRecipePage(Recipe recipe) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -96,7 +98,7 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     );
   }
 
-  void navigateToDeleteProductPage(Recipe recipe) async {
+  void navigateToDeleteRecipePage(Recipe recipe) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -113,5 +115,21 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     );
   }
 
+
+  void navigateToCheckRecipePage(Recipe recipe) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CheckRecipePage(
+          recipe: recipe,
+          onCheckRecipe: (Recipe deletedRecipe) {
+            setState(() {
+              recipesFuture = getRecipesFromFuture();
+            });
+          },
+        ),
+      ),
+    );
+  }
   
 }

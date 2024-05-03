@@ -22,7 +22,7 @@
 19-->[androidx.core:core:1.6.0] /Users/alex/.gradle/caches/transforms-3/d08c73bfb05384f2e52578171dbd141e/transformed/core-1.6.0/AndroidManifest.xml:24:18-86
 20        android:debuggable="true"
 21        android:icon="@mipmap/ic_launcher"
-22        android:label="bachelor_project" >
+22        android:label="Digital Pantry" >
 23        <activity
 24            android:name="com.example.bachelor_project.MainActivity"
 25            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

@@ -3,16 +3,16 @@ import 'product_list.dart';
 import '../model/Product.dart';
 import '../database/database_repository.dart';
 import 'delete_product_page.dart';
-import 'add_product_page.dart';
+import '../productPages/add_product_page.dart';
 import 'edit_product_page.dart';
 
  
-class ViewProductsPage extends StatefulWidget {
+class OCR_ADD extends StatefulWidget {
   @override
-  State<ViewProductsPage> createState() => _ViewProductsPageState();
+  State<OCR_ADD> createState() => _OCR_ADDState();
 }
 
-class _ViewProductsPageState extends State<ViewProductsPage> {
+class _OCR_ADDState extends State<OCR_ADD> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
   late Future<List<Product>> productsFuture;
   String path = '';
