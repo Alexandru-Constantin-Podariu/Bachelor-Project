@@ -1,3 +1,4 @@
+import 'package:bachelor_project/productPages/ocr_scan.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:number_editing_controller/number_editing_controller.dart';
@@ -6,15 +7,17 @@ import 'package:intl/intl.dart';
 
 class AddProductPage extends StatefulWidget {
   final Function(Product) onAddProduct;
+  const AddProductPage({required this.onAddProduct});
 
-  const AddProductPage({Key? key, required this.onAddProduct})
-      : super(key: key);
   @override
   _AddProductPageState createState() => _AddProductPageState();
 }
 
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormState>();
+  bool sgr = false;
+  int sgrInt = 0;
+  // Controllers for the values of a Products
   late TextEditingController nameController;
   late TextEditingController categoryController;
   late TextEditingController brandController;
@@ -26,9 +29,9 @@ class _AddProductPageState extends State<AddProductPage> {
   void initState() {
     super.initState();
     nameController = TextEditingController();
-    categoryController = TextEditingController();
+    categoryController = TextEditingController(text: ProductCategories.first);
     brandController = TextEditingController();
-    unitController = TextEditingController();
+    unitController = TextEditingController(text: MeasurementUnit.first);
     quantityController =
         NumberEditingTextController.decimal(allowNegative: false);
     bestBeforeDateController = TextEditingController();
@@ -46,6 +49,7 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    // Date selection for the Date picker
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -62,6 +66,7 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   void ErrorDialog() {
+    // Error dialog for field completion
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -80,20 +85,68 @@ class _AddProductPageState extends State<AddProductPage> {
       },
     );
   }
+// Error dialog for SGR RetuRo
+void ErrorDialogSgr() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Only Drinks can have bottles with SGR'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  // Function for navigation to the OCR scanner, handles returned data from scan
+  void navigateToAddProductPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OcrScan(
+          onScanProduct: (Product scannedProduct) {
+            setState(() {
+              nameController = TextEditingController(text: scannedProduct.name);
+              categoryController =
+                  TextEditingController(text: scannedProduct.category);
+              brandController =
+                  TextEditingController(text: scannedProduct.brand);
+              quantityController.number = scannedProduct.quantity;
+              unitController = TextEditingController(text: scannedProduct.unit);
+              bestBeforeDateController =
+                  TextEditingController(text: scannedProduct.bestBeforeDate);
+            });
+          },
+        ),
+      ),
+    );
+  }
 
+  // Scaffold for the Add Page widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(title: const Text('Add Product')),
-        body: Padding(
-          
+        body: SingleChildScrollView(
+        child: Padding(    
             padding: const EdgeInsets.all(5.0),
             child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    ElevatedButton(
+                      onPressed: navigateToAddProductPage,
+                      child: const Icon(Icons.photo_camera),
+                    ),
                     TextFormField(
                       controller: nameController,
                       decoration: const InputDecoration(labelText: 'Name'),
@@ -113,7 +166,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           });
                         }
                       },
-                      decoration: InputDecoration(labelText: 'Category'),
+                      decoration: const InputDecoration(labelText: 'Category'),
                     ),
                     TextFormField(
                       controller: brandController,
@@ -126,7 +179,8 @@ class _AddProductPageState extends State<AddProductPage> {
                       decoration: const InputDecoration(labelText: 'Quantity'),
                     ),
                     DropdownButtonFormField<String>(
-                      value: MeasurementUnit.first,
+                      value: MeasurementUnit.firstWhere(
+                          (element) => element == unitController.text),
                       items: MeasurementUnit.map((unit) {
                         return DropdownMenuItem<String>(
                           value: unit,
@@ -141,7 +195,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         }
                       },
                       decoration:
-                          InputDecoration(labelText: 'Measurement Unit'),
+                          const InputDecoration(labelText: 'Measurement Unit'),
                     ),
                     TextFormField(
                       controller: bestBeforeDateController,
@@ -152,29 +206,64 @@ class _AddProductPageState extends State<AddProductPage> {
                       },
                       readOnly: true,
                     ),
+                    Row(
+                      // Special case for SGR, only Drinks can have SGR Bottles
+                      children: [
+                        const Text("SGR: "),
+                        Checkbox(
+                            value: sgr,
+                            onChanged: categoryController.text != ProductCategories[5] ? 
+                            (bool? value) {
+                              if (value != null) {
+                                setState(() {
+                                  sgr = value;
+                                  if(sgr)
+                                  {
+                                    sgrInt = 1;
+                                  }
+                                  else{
+                                    sgrInt = 0;
+                                  }
+                                });
+                              }
+                            }
+                            : null
+                            ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
                           onPressed: () {
+                            //Verify that all fields are filled correctly
                             if (nameController.text.isNotEmpty &&
-                                categoryController.text != ProductCategories[0] &&
+                                categoryController.text !=
+                                    ProductCategories.first &&
                                 brandController.text.isNotEmpty &&
-                                unitController.text != MeasurementUnit[0] &&
+                                unitController.text != MeasurementUnit.first &&
                                 bestBeforeDateController.text.isNotEmpty &&
                                 quantityController.number != null) {
-                              final Product newProduct = Product(
-                                name: nameController.text,
-                                category: categoryController.text,
-                                brand: brandController.text,
-                                quantity: quantityController.number!.toDouble(),
-                                unit: unitController.text,
-                                bestBeforeDate: bestBeforeDateController.text,
-                              );
-                              widget.onAddProduct(newProduct);
-                              if (_formKey.currentState!.validate()) {
-                                Navigator.pop(context);
+                              if (sgr &&
+                                  categoryController.text != ProductCategories[5]) {
+                                ErrorDialogSgr();
+                              } else {
+                                //Create new Product and add to Database
+                                final Product newProduct = Product(
+                                  name: nameController.text,
+                                  category: categoryController.text,
+                                  brand: brandController.text,
+                                  quantity:
+                                      quantityController.number!.toDouble(),
+                                  unit: unitController.text,
+                                  sgr: sgrInt,
+                                  bestBeforeDate: bestBeforeDateController.text,
+                                );
+                                widget.onAddProduct(newProduct);
+                                if (_formKey.currentState!.validate()) {
+                                  Navigator.pop(context);
+                                }
                               }
                             } else {
                               ErrorDialog();
@@ -191,6 +280,6 @@ class _AddProductPageState extends State<AddProductPage> {
                       ],
                     )
                   ],
-                ))));
+                )))));
   }
 }

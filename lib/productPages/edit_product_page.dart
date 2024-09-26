@@ -15,6 +15,8 @@ class EditProductPage extends StatefulWidget {
 
 class _EditProductPageState extends State<EditProductPage> {
   final _formKey = GlobalKey<FormState>();
+  bool sgr = false;
+  int sgrInt = 0;
   late TextEditingController nameController;
   late TextEditingController categoryController;
   late TextEditingController brandController;
@@ -34,6 +36,13 @@ class _EditProductPageState extends State<EditProductPage> {
     bestBeforeDateController =
         TextEditingController(text: widget.product.bestBeforeDate);
     unitController = TextEditingController(text: widget.product.unit);
+    sgrInt = widget.product.sgr;
+    if(sgrInt == 1){
+      sgr = true;
+    }
+    else{
+      sgr = false;
+    }
   }
 
   @override
@@ -82,15 +91,35 @@ class _EditProductPageState extends State<EditProductPage> {
       },
     );
   }
+  void ErrorDialogSgr() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Only Drinks can have bottles with SGR'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          title: Text('Edit Product'),
+          title: const Text('Edit Product'),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+        child: Padding(    
           padding: const EdgeInsets.all(5.0),
           child: Form(
             key: _formKey,
@@ -99,7 +128,7 @@ class _EditProductPageState extends State<EditProductPage> {
               children: [
                 TextFormField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
                 DropdownButtonFormField<String>(
                   value: ProductCategories.firstWhere((element) => element == categoryController.text),
@@ -116,11 +145,11 @@ class _EditProductPageState extends State<EditProductPage> {
                       });
                     }
                   },
-                  decoration: InputDecoration(labelText: 'Category'),
+                  decoration: const InputDecoration(labelText: 'Category'),
                 ),
                 TextFormField(
                   controller: brandController,
-                  decoration: InputDecoration(labelText: 'Brand'),
+                  decoration: const InputDecoration(labelText: 'Brand'),
                 ),
                 TextFormField(
                   keyboardType: const TextInputType.numberWithOptions(
@@ -143,57 +172,90 @@ class _EditProductPageState extends State<EditProductPage> {
                       });
                     }
                   },
-                  decoration: InputDecoration(labelText: 'Measurement Unit'),
+                  decoration: const InputDecoration(labelText: 'Measurement Unit'),
                 ),
                 TextFormField(
                   controller: bestBeforeDateController,
-                  decoration: InputDecoration(labelText: 'Best Before Date'),
+                  decoration: const InputDecoration(labelText: 'Best Before Date'),
                   onTap: () {
                     _selectDate(context);
                   },
                   readOnly: true,
                 ),
-                SizedBox(height: 20),
+                Row(
+                      children: [
+                        const Text("SGR: "),
+                        Checkbox(
+                            value: sgr,
+                            
+                            onChanged: categoryController.text == ProductCategories[5] ?
+                            (bool? value) {
+                              if (value != null) {
+                                setState(() {
+                                  sgr = value;
+                                  if(sgr)
+                                  {
+                                    sgrInt = 1;
+                                  }
+                                  else{
+                                    sgrInt = 0;
+                                  }
+                                });
+                              }
+                            }
+                            : null
+                            ),
+                      ],
+                    ),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        if (nameController.text.isNotEmpty &&
-                            categoryController.text != ProductCategories[0] &&
-                            brandController.text.isNotEmpty &&
-                            unitController.text != MeasurementUnit[0] &&
-                            quantityController.number != null &&
-                            bestBeforeDateController.text.isNotEmpty) {
-                          Product editedProduct = Product(
-                            name: nameController.text,
-                            category: categoryController.text,
-                            brand: brandController.text,
-                            quantity: quantityController.number!.toDouble(),
-                            unit: unitController.text,
-                            bestBeforeDate: bestBeforeDateController.text,
-                          );
-                          widget.onEditProduct(editedProduct);
-                          if (_formKey.currentState!.validate()) {
-                            Navigator.pop(context);
-                          }
-                        } else {
-                          ErrorDialog();
-                        }
-                      },
-                      child: Text('Edit Product'),
-                    ),
+                          onPressed: () {
+                            if (nameController.text.isNotEmpty &&
+                                categoryController.text !=
+                                    ProductCategories.first &&
+                                brandController.text.isNotEmpty &&
+                                unitController.text != MeasurementUnit.first &&
+                                bestBeforeDateController.text.isNotEmpty &&
+                                quantityController.number != null) {
+                              if (sgr &&
+                                  categoryController.text != ProductCategories[5]) {
+                                ErrorDialogSgr();
+                              } else {
+                                final Product editedProduct = Product(
+                                  name: nameController.text,
+                                  category: categoryController.text,
+                                  brand: brandController.text,
+                                  quantity:
+                                      quantityController.number!.toDouble(),
+                                  unit: unitController.text,
+                                  sgr: sgrInt,
+                                  bestBeforeDate: bestBeforeDateController.text,
+                                );
+                                widget.onEditProduct(editedProduct);
+                                if (_formKey.currentState!.validate()) {
+                                  Navigator.pop(context);
+                                }
+                              }
+                            } else {
+                              ErrorDialog();
+                            }
+                          },
+                          child: const Text('Edit Product'),
+                        ),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-        ));
+        )));
   }
 }

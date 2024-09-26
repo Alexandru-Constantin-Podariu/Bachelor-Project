@@ -1,4 +1,8 @@
-import 'package:bachelor_project/recipePages/check_recipe_page.dart';
+import 'package:bachelor_project/main.dart';
+import 'package:bachelor_project/model/RecipeFunctions.dart';
+import 'package:bachelor_project/productPages/view_products_page.dart';
+import 'package:bachelor_project/recipePages/prepare_recipe_page.dart';
+import 'package:bachelor_project/shoppingListPages/view_shoppingList_page.dart';
 import 'package:flutter/material.dart';
 import 'recipe_list.dart';
 import '../model/Recipe.dart';
@@ -16,11 +20,20 @@ class ViewRecipesPage extends StatefulWidget {
 class _ViewRecipesPageState extends State<ViewRecipesPage> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
   late Future<List<Recipe>> recipesFuture;
+  Map<int, String> statusOfRecipes = {}; 
   String path = '';
 
   Future<List<Recipe>> getRecipesFromFuture() async {
     List<Recipe> recipes = await dbrepo.getRecipes();
-    path = await dbrepo.getDatabasePath();
+    
+
+    for(Recipe recipe in recipes) 
+    {
+       String status = await recipeStatus(recipe);
+       final entry = <int, String>{recipe.id!: status};
+       statusOfRecipes.addEntries(entry.entries);
+    }
+
     return recipes;
   }
 
@@ -35,14 +48,15 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: Text("View Recipes"),
+        title: const Text("View Recipes"),
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder(
         future: recipesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) 
           {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
            else if (snapshot.hasError)
          {
@@ -52,14 +66,59 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
             
             return RecipeList(
               recipes: recipes,
+              statusOfRecipes: statusOfRecipes,
               onEditRecipeClick: navigateToEditRecipePage,
               onAddRecipeClick: navigateToAddRecipePage,
               onDeleteRecipeClick: navigateToDeleteRecipePage,
-              onCheckRecipeClick: navigateToCheckRecipePage
+              onPrepareRecipeClick: navigateToPrepareRecipe,
             );
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          navigateToAddRecipePage();
+        },
+        child: const Icon(Icons.add),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home"),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.food_bank),
+            label: "Groceries"),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.receipt),
+            label: "Recipes"),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            label: "Shopping List"),
+        ],
+        currentIndex: 2,
+        selectedItemColor: const Color.fromARGB(255, 243, 158, 79),
+        unselectedItemColor: Colors.blue,
+        onTap: (index){
+          switch(index){
+            case 0:
+             
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: "Kitchen Assist")));
+              break;
+            case 1:
+            
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProductsPage()));
+            case 2:          
+              break;
+            case 3:
+              
+               Navigator.push(context, MaterialPageRoute(builder: (context) => ViewShoppingListPage()));
+               break;
+            case 4:
+               break;
+          }
+        }
+        ),  
     );
   }
 
@@ -116,14 +175,20 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
   }
 
 
-  void navigateToCheckRecipePage(Recipe recipe) async {
+  void navigateToPrepareRecipe(Recipe recipe) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckRecipePage(
+        builder: (context) => PrepareRecipePage(
           recipe: recipe,
-          onCheckRecipe: (Recipe deletedRecipe) {
+          onPrepareRecipe: (Recipe preparedRecipe, List<String> ingredients, int status) {
             setState(() {
+              if(status == 1) {
+                updateInventory(preparedRecipe);
+              }
+              else {
+                addToShoppingList(ingredients);
+              }
               recipesFuture = getRecipesFromFuture();
             });
           },
@@ -131,5 +196,4 @@ class _ViewRecipesPageState extends State<ViewRecipesPage> {
       ),
     );
   }
-  
 }

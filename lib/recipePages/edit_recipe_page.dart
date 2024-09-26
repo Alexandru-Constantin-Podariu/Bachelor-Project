@@ -1,3 +1,5 @@
+import 'package:number_editing_controller/number_editing_controller.dart';
+
 import '../model/Recipe.dart';
 import 'package:flutter/material.dart';
 //import 'package:number_editing_controller/number_editing_controller.dart';
@@ -17,6 +19,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController categoryController;
+  late NumberEditingTextController timeController;
+  late NumberEditingTextController servingsController;
     late TextEditingController ingredientsController;
   late TextEditingController instructionsController;
   
@@ -26,6 +30,12 @@ class _EditRecipePageState extends State<EditRecipePage> {
     super.initState();
     nameController = TextEditingController(text: widget.recipe.name);
     categoryController = TextEditingController(text: widget.recipe.category);
+    timeController =
+        NumberEditingTextController.integer(allowNegative: false);
+    timeController.number = widget.recipe.time;
+    servingsController =
+        NumberEditingTextController.integer(allowNegative: false);
+    servingsController.number = widget.recipe.servings;
     ingredientsController = TextEditingController(text: widget.recipe.ingredients);
     instructionsController = TextEditingController(text: widget.recipe.instructions);
   }
@@ -34,6 +44,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
   void dispose() {
     nameController.dispose();
     categoryController.dispose();
+    timeController.dispose();
+    servingsController.dispose();
     ingredientsController.dispose();
     instructionsController.dispose();
     super.dispose();
@@ -64,9 +76,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          title: Text('Edit Recipe'),
+          title: const Text('Edit Recipe'),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+        child: Padding(    
           padding: const EdgeInsets.all(5.0),
           child: Form(
             key: _formKey,
@@ -75,11 +88,11 @@ class _EditRecipePageState extends State<EditRecipePage> {
               children: [
                 TextFormField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
                 DropdownButtonFormField<String>(
-                  value: RecipeCategories.firstWhere((element) => element == categoryController.text),
-                  items: RecipeCategories.map((category) {
+                  value: recipeCategories.firstWhere((element) => element == categoryController.text),
+                  items: recipeCategories.map((category) {
                     return DropdownMenuItem<String>(
                       value: category,
                       child: Text(category),
@@ -92,30 +105,46 @@ class _EditRecipePageState extends State<EditRecipePage> {
                       });
                     }
                   },
-                  decoration: InputDecoration(labelText: 'Category'),
+                  decoration: const InputDecoration(labelText: 'Category'),
                 ),
                 TextFormField(
+                      keyboardType: const TextInputType.numberWithOptions(
+                          decimal: false, signed: false),
+                      controller: timeController,
+                      decoration: const InputDecoration(labelText: 'Time'),
+                    ),
+                    TextFormField(
+                      keyboardType: const TextInputType.numberWithOptions(
+                          decimal: false, signed: false),
+                      controller: servingsController,
+                      decoration: const InputDecoration(labelText: 'Number of Servings'),
+                    ),
+                TextFormField(
                   controller: ingredientsController,
-                  decoration: InputDecoration(labelText: 'Ingredients'),
+                  decoration: const InputDecoration(labelText: 'Ingredients'),
                 ),
                 TextFormField(
                   controller: instructionsController,
-                  decoration: InputDecoration(labelText: 'Instructions'),
+                  decoration: const InputDecoration(labelText: 'Instructions'),
                 ),
                 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
                       onPressed: () {
                         if (nameController.text.isNotEmpty &&
-                                categoryController.text != RecipeCategories[0] &&
+                                categoryController.text != recipeCategories[0] &&
+                                timeController.number != null &&
+                                servingsController.number != null && 
                                 instructionsController.text.isNotEmpty &&
                                 ingredientsController.text.isNotEmpty) {
                           Recipe editedRecipe = Recipe(
-                            name: nameController.text,
+                                name: nameController.text,
                                 category: categoryController.text,
+                                time: timeController.number!.toInt(),
+                                servings: servingsController.number!.toInt(),
                                 ingredients: ingredientsController.text,
                                 instructions: instructionsController.text
                           );
@@ -127,19 +156,21 @@ class _EditRecipePageState extends State<EditRecipePage> {
                           ErrorDialog();
                         }
                       },
-                      child: Text('Edit Recipe'),
+                      child: const Text('Edit Recipe'),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-        ));
+        )
+        )
+    );
   }
 }

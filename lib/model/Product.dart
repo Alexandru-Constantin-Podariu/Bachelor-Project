@@ -1,3 +1,5 @@
+// The Product Class Definition
+
 class Product{
   static int currentId = 0;
   int? id;
@@ -6,6 +8,7 @@ class Product{
   String brand;
   double quantity;
   String unit;
+  int sgr;
   String bestBeforeDate;
 
   Product({
@@ -15,6 +18,7 @@ class Product{
     required this.brand,
     required this.quantity,
     required this.unit,
+    required this.sgr,
     required this.bestBeforeDate,
   });
 
@@ -25,9 +29,10 @@ class Product{
     brand: json['brand'],
     quantity: json['quantity'],
     unit: json['unit'],
+    sgr: json['sgr'],
     bestBeforeDate: json['bestBeforeDate']
   );
-
+  
   Map<String, dynamic> toMap()
   {
     return{
@@ -37,6 +42,7 @@ class Product{
         'brand': brand,
         'quantity': quantity,
         'unit': unit,
+        'sgr': sgr,
         'bestBeforeDate': bestBeforeDate
     };
   }
@@ -49,6 +55,7 @@ class Product{
         brand: "Pilos",
         quantity: 1,
         unit: 'MeasurementUnit.l',
+        sgr: 0,
         bestBeforeDate: "2023-12-10"
       ),
       Product(
@@ -57,6 +64,7 @@ class Product{
         brand: "Gelatelli",
         quantity: 250,
         unit: 'MeasurementUnit.g',
+        sgr: 0,
         bestBeforeDate: "2024-02-10"
       ),
       Product(
@@ -65,6 +73,7 @@ class Product{
         brand: "LidlFarm",
         quantity: 1,
         unit: 'MeasurementUnit.pack',
+        sgr: 0,
         bestBeforeDate: "2023-11-30"
       ),
       Product(
@@ -73,12 +82,14 @@ class Product{
         brand: "LidlFarm",
         quantity: 2,
         unit: 'MeasurementUnit.kg',
+        sgr: 0,
         bestBeforeDate: "2023-12-30"
       ),
     ];
     return products;
   }
 }
+  // List of values for Measurement Units
   List<String> MeasurementUnit = [
     "Select a unit",
     "g",
@@ -88,8 +99,10 @@ class Product{
     "pack"
   ];
 
+  // List of values for Product Categories
   List<String> ProductCategories = [
     "Select a category",
+    "Baked",
     "Cereals",
     "Condiments",
     "Dairy",

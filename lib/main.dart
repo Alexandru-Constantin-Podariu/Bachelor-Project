@@ -1,10 +1,11 @@
 //import 'dart:ffi';
 
-import 'package:bachelor_project/recipePages/meal_recommendation_page.dart';
+import 'package:bachelor_project/database/database_repository.dart';
+import 'package:bachelor_project/model/Recipe.dart';
+import 'package:bachelor_project/model/RecipeFunctions.dart';
 import 'package:bachelor_project/productPages/view_products_page.dart';
-import 'package:bachelor_project/productPages/expiration_page.dart';
 import 'package:bachelor_project/recipePages/view_recipes_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bachelor_project/shoppingListPages/view_shoppingList_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,27 +20,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Digital Pantry',
+      title: 'Kitchen Assist',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color.fromARGB(255, 228, 174, 103),
-            // primary:Color.fromARGB(255, 255, 255, 255) ,
-            // onPrimary: Color.fromARGB(255, 255, 255, 255),
-            // background: Color.fromARGB(255, 236, 189, 88),
-
+            seedColor: const Color.fromARGB(255, 228, 174, 103),
             brightness: Brightness.light),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-       colorScheme: ColorScheme.fromSeed(
-            seedColor: Color.fromARGB(255, 228, 174, 103),
-            // primary:Color.fromARGB(255, 0, 0, 0),
-            // onPrimary: Color.fromARGB(255, 0, 0, 0),
-            // background: Color.fromARGB(161, 67, 31, 4),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 228, 174, 103),
             brightness: Brightness.dark),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Digital Pantry'),
+      home: const MyHomePage(title: 'Kitchen Assist'),
     );
   }
 }
@@ -54,183 +48,439 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  DatabaseRepository dbrepo = DatabaseRepository.Instance;
+  int productsInDB = 0,
+      recipesInDB = 0,
+      itemsInSL = 0,
+      expiredInDB = 0,
+      freshInDB = 0,
+      expiringInDB = 0,
+      sgrInDB = 0,
+      available = 0,
+      missing = 0,
+      unavailable = 0;
+
+  Future<int> getCurrentStatus() async {
+    productsInDB = await dbrepo.getTotalNumberOfProductsInDB();
+    recipesInDB = await dbrepo.getTotalNumberOfRecipesInDB();
+    itemsInSL = await dbrepo.getTotalNumberOfItemsInSL();
+    freshInDB = await dbrepo.getTotalNumberOfFreshProductsInDB();
+    expiredInDB = await dbrepo.getTotalNumberOfExpiredProductsInDB();
+    expiringInDB = productsInDB - expiredInDB - freshInDB;
+    sgrInDB = await dbrepo.getTotalNumberOfSGRProductsInDB();
+
+    List<Recipe> recipes = await dbrepo.getRecipes();
+    
+    for (Recipe recipe in recipes) {
+      String status = await recipeStatus(recipe);
+      if (status == "Possible") {
+        available++;
+      } else if (status == "NoneAreAvailable") {
+        unavailable++;
+      }
+      else{
+        missing++;
+      }
+    }
+    return 1;
+  }
+
   @override
   void initState() {
     super.initState();
   }
 
-  void manageProduceDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('Manage your Produce'),
-        );
-      },
-    );
-  }
-  void manageRecipesDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('Manage your Recipes'),
-        );
-      },
-    );
-  }
-  void expiredProduceDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('See expired or close to expired Produce'),
-        );
-      },
-    );
-  }
-  void shoppingDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('See your Shopping List'),
-        );
-      },
-    );
-  }
-   void mealDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('Get meal Recommendations'),
-        );
-      },
-    );
-  }
-  void settingsDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('Modify settings'),
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Text(widget.title, textAlign: TextAlign.center),
+        automaticallyImplyLeading: false,
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        
-        // decoration: const BoxDecoration(
-        //   image: DecorationImage(
-        //     image: AssetImage("images/pic.jpeg"),
-        //     fit: BoxFit.cover
-        //   ),
-        // ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text("Welcome to your Pantry Management Application",
-                style: TextStyle(
-                  fontSize: 25,
-                ),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 100),
-            SizedBox(
-                width: 290,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ViewProductsPage()));
-                    },
-                    onLongPress: (){
-                      manageProduceDialog();
-                    },
-                   
-                   child: const Text('Manage Pantry',
-                        style: TextStyle(
-                          fontSize: 20,
-                        )))),
-            const SizedBox(height: 10),
-            SizedBox(
-                width: 290,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewRecipesPage()));
-                  },
-                  onLongPress: (){
-                      manageRecipesDialog();
-                    },
-                  child: const Text('Manage Recipes',
-                      style: TextStyle(                  
-                        fontSize: 20,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox(height: 100),
+          const Text("Welcome to your Kitchen Assistant",
+              style: TextStyle(
+                fontSize: 30,
+              ),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 80),
+          const Text("Dashboard",
+              style: TextStyle(
+                fontSize: 25,
+              ),
+              textAlign: TextAlign.left),
+          FutureBuilder<int>(
+            future: getCurrentStatus(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Expanded(
+                  child: DefaultTabController(
+                      length: 2,
+                      child: Column(
+                        children: [
+                          const TabBar(
+                            tabs: [
+                              Tab(text: 'Groceries'),
+                              Tab(text: 'Recipes'),
+                            ],
+                          ),
+                          Expanded(
+                              child: TabBarView(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Table(
+                                    border: const TableBorder(
+                                        horizontalInside:
+                                            BorderSide(width: 0.5),
+                                        verticalInside: BorderSide(width: 0.5),
+                                        top: BorderSide(width: 0.5),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(4))),
+                                    columnWidths: const {
+                                      0: FlexColumnWidth(3),
+                                      1: FlexColumnWidth(1),
+                                    },
+                                    children: [
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 188, 248, 133),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Fresh",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 188, 248, 133),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$freshInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 252, 248, 123),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Expiring this week",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 252, 248, 123),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$expiringInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 227, 107, 107),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Expired",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 227, 107, 107),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$expiredInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 140, 174, 249),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Total Groceries",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 140, 174, 249),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$productsInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 243, 158, 79),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Shopping List Items",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 243, 158, 79),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$itemsInSL",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 162, 247, 210),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Bottles With SGR",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 162, 247, 210),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$sgrInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ])
+                                    ],
+                                  )),
+                              Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Table(
+                                    border: const TableBorder(
+                                        horizontalInside:
+                                            BorderSide(width: 0.5),
+                                        verticalInside: BorderSide(width: 0.5)),
+                                    columnWidths: const {
+                                      0: FlexColumnWidth(3),
+                                      1: FlexColumnWidth(1),
+                                    },
+                                    children: [
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 188, 248, 133),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Available",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 188, 248, 133),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$available",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 252, 248, 123),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Missing Ingredients",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 252, 248, 123),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$missing",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 227, 107, 107),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Unavailable",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 227, 107, 107),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$unavailable",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                      TableRow(children: [
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 140, 174, 249),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: const Text(
+                                              "Total Recipes",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                255, 140, 174, 249),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "$recipesInDB",
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                    ],
+                                  )),
+                            ],
+                          ))
+                        ],
                       )),
-                )),
-            const SizedBox(height: 10),
-            SizedBox(
-                width: 290,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExpirationPage()));
-                  },
-                  onLongPress: (){
-                      expiredProduceDialog();
-                    },
-                  child: const Text('Expiration Dates',
-                      style: TextStyle(
-                        fontSize: 20,
-                      )),
-                )),
-            const SizedBox(height: 10),
-            SizedBox(
-                width: 290,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MealRecommendationPage()));
-                  },
-                  onLongPress: (){
-                      shoppingDialog();
-                    },
-                  child: const Text('Meal Recommendations',
-                      style: TextStyle(
-                        fontSize: 20,
-                      )),
-                )),
-            const SizedBox(height: 10),
-            SizedBox(
-                width: 290,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    //Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPage()));
-                  },
-                  onLongPress: (){
-                      settingsDialog();
-                    },
-                  child: const Text('Settings',
-                      style: TextStyle(
-                        fontSize: 20,
-                      )),
-                )),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.food_bank), label: "Groceries"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.receipt), label: "Recipes"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_basket), label: "Shopping List"),
           ],
-        ),
-      ),
+          currentIndex: 0,
+          selectedItemColor: const Color.fromARGB(255, 243, 158, 79),
+          unselectedItemColor: Colors.blue,
+          onTap: (index) {
+            switch (index) {
+              case 1:
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewProductsPage()));
+                break;
+              case 2:
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ViewRecipesPage()));
+                break;
+              case 3:
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewShoppingListPage()));
+                break;
+              case 4:
+                break;
+            }
+          }),
     );
   }
 }

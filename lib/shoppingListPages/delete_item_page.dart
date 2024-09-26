@@ -1,30 +1,18 @@
+import 'package:bachelor_project/model/ShoppingList.dart';
 import 'package:flutter/material.dart';
-import '../model/Product.dart';
 
 
-class DeleteProductPage extends StatelessWidget {
-  final Product product;
-  final Function(Product) onDeleteProduct;
+class DeleteItemPage extends StatelessWidget {
+  final ShoppingList item;
+  final Function(ShoppingList) onDeleteItem;
 
-  DeleteProductPage({required this.product, required this.onDeleteProduct});
-
-  String getMessage()
-  {
-    if(product.sgr == 1)
-    {
-      return "This bottle has a SGR Warranty. Make sure you return the bottle to a store to get the Warranty back!";
-    }
-    else
-    {
-      return "";
-    }
-  }
+  DeleteItemPage({required this.item, required this.onDeleteItem});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Delete Product'),
+        title: const Text('Delete from Shopping List'),
       ),
 
       body: Padding(
@@ -34,13 +22,7 @@ class DeleteProductPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Are you sure you want to delete the product "${product.name}"?',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 50),
-            Text(
-              getMessage(),
+              'Are you sure you want to delete the item "${item.name}"?',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 20),
             ),
@@ -50,7 +32,7 @@ class DeleteProductPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                      onDeleteProduct(product);
+                      onDeleteItem(item);
                       Navigator.pop(context, true);
                   },
                   child: const Text('Yes'),

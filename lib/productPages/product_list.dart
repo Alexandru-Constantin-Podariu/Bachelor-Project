@@ -18,56 +18,97 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
-  late String _selectedCategory;
+  late String selectedCategory;
+  List<String> freshnessMenu = ["All", "Fresh", "Expiring this week", "Expired"];
+  late String selectedOption;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = ProductCategories.first;
+    selectedCategory = ProductCategories.first;
+    selectedOption = freshnessMenu[0];
   }
 
   @override
   Widget build(BuildContext context) {
     List<Product> filteredProducts;
-    if(_selectedCategory == ProductCategories.first)
+    if (selectedCategory == ProductCategories.first) 
     {
-        filteredProducts = widget.products.toList();
+      filteredProducts = widget.products.toList();
     }
-    else
+    else 
     {
       filteredProducts = widget.products
-        .where((product) => product.category == _selectedCategory)
-        .toList();
+          .where((product) => product.category == selectedCategory)
+          .toList();
     }
 
-    return Column(
+    if(selectedOption == freshnessMenu[1])
+    {
+        filteredProducts.retainWhere((product) =>
+            product.bestBeforeDate.compareTo(DateTime.now().add(const Duration(days: 7)).toString()) > 0);
+    }
+    else if (selectedOption == freshnessMenu[2])
+    {
+      filteredProducts.retainWhere((product) =>
+            product.bestBeforeDate.compareTo(DateTime.now().toString()) >= 0 &&
+            product.bestBeforeDate.compareTo(DateTime.now().add(const Duration(days: 7)).toString()) <= 0);
+    }
+    else if (selectedOption == freshnessMenu[3])
+    {
+        filteredProducts.retainWhere((product) =>
+            product.bestBeforeDate.compareTo(DateTime.now().toString()) < 0);
+    }
+
+     return Column(
       children: [
-        Row(
+        Column(
           children: [
-            ElevatedButton(
-              onPressed: widget.onAddProductClick,
-              child: const Icon(Icons.add_circle),
-              
+            Row(
+              children: [             
+                const SizedBox(width: 80),
+                const Text("View: "),
+                const SizedBox(width: 20),
+                DropdownButton<String>(
+                  value: selectedOption,
+                  items: freshnessMenu.map((option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      setState(() {
+                        selectedOption = value;
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text("Categories: "),
-            const SizedBox(width: 10),
-            DropdownButton<String>(
-              value: _selectedCategory,
-              items: ProductCategories.map((category) {
-                return DropdownMenuItem<String>(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                if (value != null) {
-                  setState(() {
-                    _selectedCategory = value;
-                  });
-                }
-              },
-            ),
+            Row(children: 
+            [
+              const SizedBox(width: 80),                
+              const Text("Categories: "),
+              const SizedBox(width: 20),
+              DropdownButton<String>(
+                value: selectedCategory,
+                items: ProductCategories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  if (value != null) {
+                    setState(() {
+                      selectedCategory = value;
+                    });
+                  }
+                },
+              ),
+            ]),
           ],
         ),
         Expanded(
@@ -110,21 +151,38 @@ class ProductListItem extends StatelessWidget {
   {
     // getProductsFromFuture();
   }
+  Color getColorOfCard(Product product)
+  {
+    if(product.bestBeforeDate.compareTo(DateTime.now().add(const Duration(days: 7)).toString()) >= 0)
+    {
+      return const Color.fromARGB(255, 188, 248, 133);
+    }
+    else if(product.bestBeforeDate.compareTo(DateTime.now().toString()) < 0)
+    {
+      return const Color.fromARGB(255, 227, 107, 107);
+    }
+   return const Color.fromARGB(255, 252, 248, 123);
+  }
 
   @override
   Widget build(BuildContext context) {
     
     return Card(
       margin: const EdgeInsets.all(4),
-      color: Theme.of(context).colorScheme.onInverseSurface,
+      color: getColorOfCard(product),
       child: ExpansionTile(
+        leading: Image.asset("images/${product.category}.png"),
         title: Text(product.name,
             style: const TextStyle( fontSize: 25)),
         children: [
           ListTile(
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: [  
+                Text(
+                  'Category: ${product.category}',
+                  style: const TextStyle( fontSize: 20),
+                ),    
                 Text(
                   'Brand: ${product.brand}',
                   style: const TextStyle( fontSize: 20),
@@ -143,13 +201,14 @@ class ProductListItem extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
+              const SizedBox(width: 10),
               IconButton(
                 icon: const Icon(Icons.delete_sweep_outlined),
                 onPressed: () => onDeleteProductClick(product),
               ),
-              const SizedBox(width: 280),
+              const SizedBox(width: 290),
               IconButton(
-                icon: Icon(Icons.edit_note),
+                icon: const Icon(Icons.edit_note),
                 onPressed: () => onEditProductClick(product),
               ),
             ],

@@ -1,35 +1,33 @@
 import 'package:bachelor_project/main.dart';
+import 'package:bachelor_project/model/ShoppingList.dart';
+import 'package:bachelor_project/productPages/view_products_page.dart';
 import 'package:bachelor_project/recipePages/view_recipes_page.dart';
-import 'package:bachelor_project/shoppingListPages/view_shoppingList_page.dart';
+import 'package:bachelor_project/shoppingListPages/add_Item_page.dart';
 import 'package:flutter/material.dart';
-import 'product_list.dart';
-import '../model/Product.dart';
+import 'shopping_list.dart';
 import '../database/database_repository.dart';
-import 'delete_product_page.dart';
-import '../productPages/add_product_page.dart';
-import 'edit_product_page.dart';
+import 'delete_item_page.dart';
+import 'edit_item_page.dart';
 
  
-class ViewProductsPage extends StatefulWidget {
+class ViewShoppingListPage extends StatefulWidget {
   @override
-  State<ViewProductsPage> createState() => _ViewProductsPageState();
+  State<ViewShoppingListPage> createState() => _ViewShoppingListPageState();
 }
 
-class _ViewProductsPageState extends State<ViewProductsPage> {
+class _ViewShoppingListPageState extends State<ViewShoppingListPage> {
   DatabaseRepository dbrepo = DatabaseRepository.Instance;
-  late Future<List<Product>> productsFuture;
-  String path = '';
+  late Future<List<ShoppingList>> shoppingListFuture;
 
-  Future<List<Product>> getProductsFromFuture() async {
-    List<Product> products = await dbrepo.getProducts();
-    path = await dbrepo.getDatabasePath();
-    return products;
+  Future<List<ShoppingList>> getShoppingListFromFuture() async {
+    List<ShoppingList> items = await dbrepo.getShoppingList();
+    return items;
   }
 
   @override
   void initState() {
     super.initState();
-    productsFuture = getProductsFromFuture();
+    shoppingListFuture = getShoppingListFromFuture();
   }
 
    @override
@@ -37,11 +35,11 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: const Text("View Groceries"),
+        title: const Text("View Shopping List"),
         automaticallyImplyLeading: false,
       ),
       body: FutureBuilder(
-        future: productsFuture,
+        future: shoppingListFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) 
           {
@@ -51,26 +49,26 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
          {
             return Text('Error: ${snapshot.error}');
           } else {
-            List<Product> products = snapshot.data as List<Product>;
+            List<ShoppingList> items = snapshot.data as List<ShoppingList>;
             
-            return ProductList(
-              products: products,
-              onEditProductClick: navigateToEditProductPage,
-              onAddProductClick: navigateToAddProductPage,
-              onDeleteProductClick: navigateToDeleteProductPage,
+            return ShoppingListItems(
+              items: items,
+              onEditItemClick: navigateToEditItemPage,
+              onAddItemClick: navigateToAddItemPage,
+              onDeleteItemClick: navigateToDeleteItemPage,
             );
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          navigateToAddProductPage();
+          navigateToAddItemPage();
         },
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+            BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home"),
             BottomNavigationBarItem(
@@ -83,25 +81,25 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
             icon: Icon(Icons.shopping_basket),
             label: "Shopping List"),
         ],
-        currentIndex: 1,
+        currentIndex: 3,
         selectedItemColor: const Color.fromARGB(255, 243, 158, 79),
         unselectedItemColor: Colors.blue,
         onTap: (index){
           switch(index){
             case 0:
-
+              
               Navigator.push(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: "Kitchen Assist")));
               break;
             case 1:
+            
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ViewProductsPage()));
               break;
             case 2: 
-
+       
               Navigator.push(context, MaterialPageRoute(builder: (context) => ViewRecipesPage()));
               break;
             case 3:
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ViewShoppingListPage()));
-              break;
+               break;
             case 4:
                break;
           }
@@ -110,15 +108,15 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
     );
   }
 
-  void navigateToAddProductPage() async {
+  void navigateToAddItemPage() async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddProductPage(
-          onAddProduct: (Product newProduct) {
+        builder: (context) => AddItemPage(
+          onAddItem: (ShoppingList newItem) {
             setState(() {
-              dbrepo.addProduct(newProduct);
-              productsFuture = getProductsFromFuture();
+              dbrepo.addShoppingListItem(newItem);
+              shoppingListFuture = getShoppingListFromFuture();
             });
           },
         ),
@@ -127,17 +125,17 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
 
   }
 
-  void navigateToEditProductPage(Product product) async {
+  void navigateToEditItemPage(ShoppingList item) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProductPage(
-          product: product,
-          onEditProduct: (Product editedProduct) {
+        builder: (context) => EditItemPage(
+          item: item,
+          onEditItem: (ShoppingList editedItem) {
             setState(() {
-              editedProduct.id = product.id;
-              dbrepo.editProduct(editedProduct);
-              productsFuture = getProductsFromFuture();
+              editedItem.id = item.id;
+              dbrepo.editShoppingListItem(editedItem);
+              shoppingListFuture = getShoppingListFromFuture();
             });
           },
         ),
@@ -145,16 +143,16 @@ class _ViewProductsPageState extends State<ViewProductsPage> {
     );
   }
 
-  void navigateToDeleteProductPage(Product product) async {
+  void navigateToDeleteItemPage(ShoppingList item) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DeleteProductPage(
-          product: product,
-          onDeleteProduct: (Product deletedProduct) {
+        builder: (context) => DeleteItemPage(
+          item: item,
+          onDeleteItem: (ShoppingList deletedItem) {
             setState(() {
-              dbrepo.deleteProduct(deletedProduct.id!);
-              productsFuture = getProductsFromFuture();
+              dbrepo.deleteShoppingListItem(deletedItem.id!);
+              shoppingListFuture = getShoppingListFromFuture();
             });
           },
         ),
